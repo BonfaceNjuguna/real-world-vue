@@ -29,6 +29,26 @@
         "date": "July 22, 2022",
         "time": "11:00",
         "organizer": "Carey Wales"
+      },
+      {
+        "id": 889,
+        "category": "food",
+        "title": "Lets eat together",
+        "description": "Join us as we prepare some great meals",
+        "location": "Loropio",
+        "date": "Augus 30, 2022",
+        "time": "13:00",
+        "organizer": "Tabby Ayako"
+      },
+      {
+        "id": 789,
+        "category": "birthday",
+        "title": "Bonface's Birthday",
+        "description": "Let's all come together and celebrate Bonnies birthday",
+        "location": "Mombasa",
+        "date": "Sept 5, 2022",
+        "time": "18:00",
+        "organizer": "Bonface Njuguna"
       }
     ]
   }
