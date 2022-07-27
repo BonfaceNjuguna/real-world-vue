@@ -6,7 +6,12 @@ import EventRegister from '@/views/event/EventRegister.vue'
 import EventEdit from '@/views/event/EventEdit.vue'
 import NotFound from '@/views/NotFound.vue'
 import NetworkError from '@/views/NetworkError.vue'
-import About from '../views/MyAbout.vue'
+import NProgress from 'nprogress'
+import EventService from '@/services/EventService'
+import GStore from '@/store'
+
+const About = () =>
+  import(/* webpackChunkName: "about" */ '../views/MyAbout.vue')
 
 const routes = [
   {
@@ -20,6 +25,23 @@ const routes = [
     name: 'EventLayout',
     props: true,
     component: EventLayout,
+    beforeEnter: (to) => {
+      return EventService.getEvent(to.params.id)
+        .then((response) => {
+          // response data
+          GStore.event = response.data
+        })
+        .catch((error) => {
+          if (error.response && error.response.status == 404) {
+            return {
+              name: '404Resource',
+              params: { resource: 'event' },
+            }
+          } else {
+            return { name: 'NetworkError' }
+          }
+        })
+    },
     children: [
       {
         path: '',
@@ -35,6 +57,7 @@ const routes = [
         path: 'edit',
         name: 'EventEdit',
         component: EventEdit,
+        meta: { requireAuth: true },
       },
     ],
   },
@@ -70,6 +93,33 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
+})
+router.beforeEach((to, from) => {
+  NProgress.start()
+
+  const notAuthorized = true
+  if (to.meta.requireAuth && notAuthorized) {
+    GStore.flashMessage = 'Sorry, you are not authorized to view this page'
+
+    setTimeout(() => {
+      GStore.flashMessage = ''
+    }, 3000)
+    if (from.href) {
+      return false
+    } else {
+      return { path: '/' }
+    }
+  }
 })
 
+router.afterEach(() => {
+  NProgress.done()
+})
 export default router
